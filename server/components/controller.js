@@ -26,7 +26,7 @@ export const authenticateUser = (req, res) => {
         res.status(401).send("not logged in");
     }
 }
-passport.use(new Strategy({ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
+passport.use(new Strategy('local-user',{ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
     try {
 
         const checkUser = await pool.query(userCheck, [email]);
@@ -40,20 +40,26 @@ passport.use(new Strategy({ usernameField: "email", passwordField: "password" },
         if (!match) {
             return cb(null, false);
         }
-        return cb(null, user);
+        return cb(null, {...user, role:'user'} );
     } catch (error) {
         cb(error);
     }
 }));
 
 passport.serializeUser((user, cb) => {
-    cb(null, user);
+    cb(null, {id: user.id, role: user.role });
 });
-passport.deserializeUser((user, cb) => {
-    cb(null, user);
+passport.deserializeUser(async(data, cb) => {
+    if (data.role === 'user'){
+        const res = await pool.query(userCheck, [email]);
+        cb(null, res.rows[0])
+    }else if (data.role === 'trainer'){
+        const res = await pool.query(TrainerCheck, [email]);
+        cb(null, res.rows[0]);
+    }
 });
 // PLANS CONTROLLER.
-export const getPlans = async (req,res) =>{
+export const getPlans = async (req, res) => {
     const result = await pool.query(plans);
     try {
         res.json(result.rows);
@@ -64,18 +70,51 @@ export const getPlans = async (req,res) =>{
 
 // TRAINER CONTROLLER.
 
-export const newTrainer = async (req,res) =>{
-    const {name, email, phone_number, password } = req.body;
+export const newTrainer = async (req, res) => {
+    const { name, email, phone_number, password } = req.body;
     try {
-        
-    
-    const checkTrainer = await pool.query(TrainerCheck, [email]);
-    if (checkTrainer.rows.length > 0 ){
-        return res.status(409).send("trainer already exist");
-    } 
-    const hashedPassword= await bcrypt.hash(password, 10);
-    const makeTrainer = await pool.query(postTrainer, [name, email, phone_number, hashedPassword]);
-    res.status(200).send("trainer account created")} catch (err) {
+
+
+        const checkTrainer = await pool.query(TrainerCheck, [email]);
+        if (checkTrainer.rows.length > 0) {
+            return res.status(409).send("trainer already exist");
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const makeTrainer = await pool.query(postTrainer, [name, email, phone_number, hashedPassword]);
+        res.status(200).send("trainer account created")
+    } catch (err) {
         console.error(err);
     }
 }
+
+export const authenticateTrainer = (req, res) => {
+    if (req.isAuthenticated()) {
+        res.status(200).json({ trainer: req.user });
+    } else {
+        res.status(401).send("Trainer unauthorized");
+    }
+}
+
+passport.use(new Strategy('local-trainer',{ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
+    try {
+        const checkTrainer = await pool.query(TrainerCheck, [email]);
+
+        if (checkTrainer.rows.length === 0) {
+          return  cb(null, false);
+        }
+        const trainer = checkTrainer.rows[0];
+        const hashedPassword = trainer.password;
+
+        const match = await bcrypt.compare(password, hashedPassword);
+
+        if (!match) {
+          return  cb(null, fasle);
+        } else {
+    return cb(null, {...trainer, role : 'trainer'})
+        }
+    
+    } catch (err) {
+  return cb(err);
+    }
+
+}));

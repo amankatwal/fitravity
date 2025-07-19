@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Plans from './pages/Plans';
 import Trainerdashboard from './pages/Trainerdashboard';
 import Trainersignup from './pages/Trainersignup';
+import Trainerlog from './pages/Trainerlog';
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
        <Route path='/dashboard' element = {<Dashboard />} />
        <Route path='/plans' element = {<Plans />} />
        <Route path = '/trainer/signup' element = {<Trainersignup />}/>
+       <Route path='/trainer/login' element= {<Trainerlog />} />
        <Route path = '/trainer/dashboard' element = {<Trainerdashboard />} />
     </Routes>
     </>

@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 
-export const Login = () => {
+export const Trainerlog = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [details, setDetails] = useState({
@@ -29,10 +29,10 @@ setDetails({...details, [e.target.name]: e.target.value})
   }
 
   const loginUser = async () =>{try {
-    const res= await axios.post("http://localhost:3000/login", details, {withCredentials: true});
+    const res= await api.post("http://localhost:3000/trainer/login", details, {withCredentials: true});
   if (res.status === 200){
     
-  navigate("/dashboard");
+  navigate("/trainer/dashboard");
   }
   else if (res.status !== 200){
     alert(res.status)
@@ -48,10 +48,10 @@ const api = axios.create({
   useEffect(()=>{
   const checkauth = async() =>{
     try {
-      const res = await api.get("/secret");
-      navigate("/dashboard");
+      const res = await api.get("/trainer/secret");
+      navigate("/trainer/dashboard");
     } catch (error) {
-      navigate("/login")
+      navigate("/trainer/login")
     } 
     
   }
@@ -125,4 +125,4 @@ const api = axios.create({
   )
 }
 
-export default Login;
+export default Trainerlog;
