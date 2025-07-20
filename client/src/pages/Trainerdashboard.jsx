@@ -16,7 +16,7 @@ useEffect(()=>{
     try {
       const res = await api.get("/trainer/secret");
       setTrainer(res.data.trainer);
-      console.log(res.data.trainer);
+      
       } catch (err) {
       navigate("/trainer/login")
     } 

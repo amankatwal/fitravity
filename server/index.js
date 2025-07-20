@@ -10,7 +10,7 @@ const port = 3000;
 app.use(session({
   secret : "FITRAVKEY",
   resave: false,
-  saveUninitialized : true,
+  saveUninitialized : false,
   cookie: {
     secure: false,         
     maxAge: 24 * 60 * 60 * 1000 

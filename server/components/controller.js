@@ -20,13 +20,13 @@ export const newUser = async (req, res) => {
     }
 }
 export const authenticateUser = (req, res) => {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && req.user.role === "user") {
         res.status(200).json({ user: req.user });
     } else {
         res.status(401).send("not logged in");
     }
 }
-passport.use(new Strategy('local-user',{ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
+passport.use('local-user',new Strategy({ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
     try {
 
         const checkUser = await pool.query(userCheck, [email]);
@@ -47,15 +47,15 @@ passport.use(new Strategy('local-user',{ usernameField: "email", passwordField: 
 }));
 
 passport.serializeUser((user, cb) => {
-    cb(null, {id: user.id, role: user.role });
+    cb(null, {email: user.email, role: user.role });
 });
 passport.deserializeUser(async(data, cb) => {
     if (data.role === 'user'){
-        const res = await pool.query(userCheck, [email]);
-        cb(null, res.rows[0])
+        const res = await pool.query(userCheck, [data.email]);
+       return cb(null, {...res.rows[0], role: "user"})
     }else if (data.role === 'trainer'){
-        const res = await pool.query(TrainerCheck, [email]);
-        cb(null, res.rows[0]);
+        const res = await pool.query(TrainerCheck, [data.email]);
+       return cb(null, {...res.rows[0], role: "trainer"});
     }
 });
 // PLANS CONTROLLER.
@@ -88,14 +88,14 @@ export const newTrainer = async (req, res) => {
 }
 
 export const authenticateTrainer = (req, res) => {
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && req.user.role === "trainer") {
         res.status(200).json({ trainer: req.user });
     } else {
         res.status(401).send("Trainer unauthorized");
     }
 }
 
-passport.use(new Strategy('local-trainer',{ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
+passport.use('local-trainer', new Strategy({ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {
     try {
         const checkTrainer = await pool.query(TrainerCheck, [email]);
 
@@ -108,7 +108,7 @@ passport.use(new Strategy('local-trainer',{ usernameField: "email", passwordFiel
         const match = await bcrypt.compare(password, hashedPassword);
 
         if (!match) {
-          return  cb(null, fasle);
+          return  cb(null, false);
         } else {
     return cb(null, {...trainer, role : 'trainer'})
         }
