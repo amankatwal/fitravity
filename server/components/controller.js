@@ -20,10 +20,12 @@ export const newUser = async (req, res) => {
     }
 }
 export const authenticateUser = (req, res) => {
-    if (req.isAuthenticated() && req.user.role === "user") {
+    if (req.isAuthenticated() && req.user.plan !== null) {
         res.status(200).json({ user: req.user });
-    } else {
-        res.status(401).send("not logged in");
+    } else if(req.isAuthenticated() && req.user.plan === null) {
+        res.status(403).send("User needs to purchase Plan");
+    }else {
+        res.status(401).send("User not logged in");
     }
 }
 passport.use('local-user',new Strategy({ usernameField: "email", passwordField: "password" }, async function verify(email, password, cb) {

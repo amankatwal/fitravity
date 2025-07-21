@@ -9,5 +9,5 @@ export const plans = "SELECT * FROM plans ORDER BY price ASC "
 
 export const postTrainer= "INSERT INTO trainer (name, email,phone_number, password ) values($1, $2, $3, $4)";
 export const TrainerCheck = "SELECT * FROM trainer WHERE EMAIL =$1";
-
+export const postPlan = "UPDATE users SET plan = $1 WHERE user_id = $2"
 

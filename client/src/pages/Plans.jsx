@@ -1,9 +1,18 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 
 const Plans = () => {
+  const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
+  const [planPurchase, setPlanPurchased] = useState();
+  const handleClick = async(planId) => {
+    setPlanPurchased(planId);
+    const res = await axios.post("http://localhost:3000/plans",{plan : planId}, {withCredentials : true });
+     alert("plan Purchased");
+    navigate("/dashboard")
+  } 
 
   useEffect(()=>{
     const loadPlan = async() =>{
@@ -27,7 +36,7 @@ const Plans = () => {
             {plan.training_videos === true || plan.training_videos === "true" ? (<p className='text-amber-50 mb-7'>TRAINING VIDEOS</p>): (<p className='text-[#8a8f98] mb-7 line-through font-light'>TRAINING VIDEOS</p>)}
             {plan.chat_access === true || plan.chat_access === "true" ? (<p className='text-amber-50 mb-7'>PERSONALISED TRAINING WITH CHAT ACCESS</p>): (<p className='text-[#8a8f98] mb-7 line-through font-light'>PERSONALISED TRAINING WITH CHAT ACCESS</p>)}
             {plan.diet_instructions === true || plan.diet_instructions === "true" ? (<p className='text-amber-50 mb-7'>CUSTOMIZED DIET WITH CHAT ACCESS</p>): (<p className='text-[#8a8f98] mb-7 line-through font-light'>CUSTOMIZED DIET WITH CHAT ACCESS</p>)}
-           <button className="cursor-pointer rounded-xs text-xl text-[#1e1e1e] bg-lime-400 px-4 py-1 font-semibold hover:text-black-400 hover:bg-lime-500 hover:text-black transition duration-300 hover:scale-103 hover:scale-3d">
+           <button onClick ={() =>handleClick(plan.id)} className="cursor-pointer rounded-xs text-xl text-[#1e1e1e] bg-lime-400 px-4 py-1 font-semibold hover:text-black-400 hover:bg-lime-500 hover:text-black transition duration-300 hover:scale-103 hover:scale-3d">
             GET STARTED</button>
            </div>
            

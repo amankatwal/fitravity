@@ -49,10 +49,15 @@ const api = axios.create({
   const checkauth = async() =>{
     try {
       const res = await api.get("/secret");
-      navigate("/dashboard");
-    } catch (error) {
+      if (res.status === 200){
+      navigate("/dashboard")
+      } 
+    } catch (err) {
+      if(err.response?.status === 403){
+        navigate("/plans")
+      }else{
       navigate("/login")
-    } 
+    } }
     
   }
   checkauth();
