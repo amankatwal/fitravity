@@ -27,7 +27,7 @@ useEffect(()=>{
   return (
 
     <div>
-      
+      Hello {trainer.name}
     </div>
     
   );

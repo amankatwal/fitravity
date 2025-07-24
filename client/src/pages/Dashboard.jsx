@@ -17,7 +17,10 @@ useEffect(()=>{
   const checkauth = async() =>{
     try {
       const res = await api.get("/secret");
-      setUser(res.data.user)
+      if (res.data.message === "403"){
+        navigate("/plans")
+      }
+      setUser(res.data.user);
     } catch (error) {
       navigate("/login")
     } finally {
@@ -32,7 +35,7 @@ useEffect(()=>{
  {loading ? (<div className="flex justify-center items-center min-h-screen bg-black"><img src="/exercise.gif" /> </div>) : 
    ( <div>
       <Dashboardnavbar />
-      <div className='bg-amber-500 min-h-[50vh]'>Hello {user.name.split(' ')[0]}</div>
+      <div className='bg-amber-500 min-h-[50vh]'>Hello {user.name?.split(' ')[0]}</div>
     </div>)}
     </>
   )

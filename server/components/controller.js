@@ -20,10 +20,10 @@ export const newUser = async (req, res) => {
     }
 }
 export const authenticateUser = (req, res) => {
-    if (req.isAuthenticated() && req.user.plan !== null) {
-        res.status(200).json({ user: req.user });
-    } else if(req.isAuthenticated() && req.user.plan === null) {
-        res.status(403).send("User needs to purchase Plan");
+    if (req.isAuthenticated() && req.user.plan !== null && req.user.role === "user") {
+        res.status(200).json({ user: req.user, message: "200" });
+    } else if(req.isAuthenticated() && req.user.plan === null && req.user.role === "user") {
+        res.status(200).json({user: req.user, message: "403"});
     }else {
         res.status(401).send("User not logged in");
     }

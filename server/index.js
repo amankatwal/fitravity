@@ -6,6 +6,9 @@ import passport from "passport";
 
 const app = express();
 const port = 3000;
+ app.use(cors({origin: "http://localhost:5173",
+  credentials : true,
+ }))
 
 app.use(session({
   secret : "FITRAVKEY",
@@ -16,15 +19,14 @@ app.use(session({
     maxAge: 24 * 60 * 60 * 1000 
   }
 }));
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.json())
 
- app.use(cors({origin: "http://localhost:5173",
-  credentials : true,
- }))
+
   app.use("/", router);
 
 app.listen(port, () =>{ console.log(`app is running on port ${port}`);

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authenticateTrainer, authenticateUser, getPlans, newTrainer, newUser } from "./controller.js";
 import passport from "passport";
-import { purchasePlan } from "./userController.js";
+import {  purchasePlan } from "./userController.js";
 
 
 const router = Router();
