@@ -1,7 +1,7 @@
 
 import bcrypt from "bcrypt";
 import pool from "./db.js";
-import { plans, postTrainer, postUser, TrainerCheck, userCheck } from "./query.js";
+import { plans, planTracker, postTrainer, postUser, TrainerCheck, userCheck } from "./query.js";
 import passport from "passport";
 import { Strategy } from "passport-local";
 // SIGNUP AND LOGIN CONTROLLES FOR USERS
@@ -19,9 +19,22 @@ export const newUser = async (req, res) => {
         res.status(500).send("server error");
     }
 }
-export const authenticateUser = (req, res) => {
+export const authenticateUser = async(req, res) => {
     if (req.isAuthenticated() && req.user.plan !== null && req.user.role === "user") {
-        res.status(200).json({ user: req.user, message: "200" });
+         const features = await pool.query(planTracker, [req.user.plan]);
+         const row = features.rows[0]
+
+         const featureList = {
+            type : row.name, 
+        blogspot: row.blogspot_access,
+        training_snippets: row.training_schedule,
+        progress_timeline: row.progress_tracking,
+        videos: row.training_videos,
+        chat: row.chat_access,
+        diet: row.diet_instructions,
+      };
+
+        res.status(200).json({ user: req.user, featureList, message: "200" });
     } else if(req.isAuthenticated() && req.user.plan === null && req.user.role === "user") {
         res.status(200).json({user: req.user, message: "403"});
     }else {

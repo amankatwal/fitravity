@@ -7,6 +7,7 @@ import axios from 'axios';
 const Dashboard =  () => {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState("");
+  const [feature, setFeature] = useState([]);
   const navigate = useNavigate();
 const api = axios.create({
   baseURL: 'http://localhost:3000',
@@ -21,6 +22,7 @@ useEffect(()=>{
         navigate("/plans")
       }
       setUser(res.data.user);
+      setFeature(res.data.featureList);
     } catch (error) {
       navigate("/login")
     } finally {
@@ -35,7 +37,7 @@ useEffect(()=>{
  {loading ? (<div className="flex justify-center items-center min-h-screen bg-black"><img src="/exercise.gif" /> </div>) : 
    ( <div>
       <Dashboardnavbar />
-      <div className='bg-amber-500 min-h-[50vh]'>Hello {user.name?.split(' ')[0]}</div>
+      <div className='bg-amber-500 min-h-[50vh] '>Hello {user.name?.split(' ')[0]}, Thanks for being {feature.type} user</div>
     </div>)}
     </>
   )
