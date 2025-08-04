@@ -32,6 +32,7 @@ export const authenticateUser = async(req, res) => {
         videos: row.training_videos,
         chat: row.chat_access,
         diet: row.diet_instructions,
+        dashboard : row.dashboard,
       };
 
         res.status(200).json({ user: req.user, featureList, message: "200" });

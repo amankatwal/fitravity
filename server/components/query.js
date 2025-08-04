@@ -22,4 +22,4 @@ export const updateTracker = "UPDATE trainer_tracker SET last_assigned_trainer_i
 const test = "UPDATE users SET plan = null";
 // Plans table query
 
-export const planTracker = "SELECT name, blogspot_access, training_schedule, progress_tracking, chat_access, diet_instructions, training_videos FROM plans WHERE plan_id = $1"
+export const planTracker = "SELECT name,dashboard, blogspot_access, training_schedule, progress_tracking, chat_access, diet_instructions, training_videos FROM plans WHERE plan_id = $1"
