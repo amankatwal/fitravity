@@ -1,7 +1,7 @@
 
 import bcrypt from "bcrypt";
 import pool from "./db.js";
-import { plans, planTracker, postTrainer, postUser, TrainerCheck, userCheck } from "./query.js";
+import { getClients, plans, planTracker, postTrainer, postUser, TrainerCheck, userCheck } from "./query.js";
 import passport from "passport";
 import { Strategy } from "passport-local";
 // SIGNUP AND LOGIN CONTROLLES FOR USERS
@@ -37,7 +37,7 @@ export const authenticateUser = async(req, res) => {
 
         res.status(200).json({ user: req.user, featureList, message: "200" });
     } else if(req.isAuthenticated() && req.user.plan === null && req.user.role === "user") {
-        res.status(200).json({user: req.user, message: "403"});
+        res.status(403).json({user: req.user, message: "403"});
     }else {
         res.status(401).send("User not logged in");
     }
@@ -103,9 +103,14 @@ export const newTrainer = async (req, res) => {
     }
 }
 
-export const authenticateTrainer = (req, res) => {
+export const authenticateTrainer = async(req, res) => {
     if (req.isAuthenticated() && req.user.role === "trainer") {
-        res.status(200).json({ trainer: req.user });
+        const trainerid = req.user.id
+        const clients = await pool.query(getClients,[trainerid]);
+        
+            res.status(200).json({ trainer: req.user, clients: clients.rows });
+        
+        
     } else {
         res.status(401).send("Trainer unauthorized");
     }

@@ -14,6 +14,7 @@ import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
 import Dashboardlayout from './components/Dashboardlayout';
 import Progress from './pages/Progress';
+import Client from './pages/Client';
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
        <Route path = '/trainer/signup' element = {<Trainersignup />}/>
        <Route path='/trainer/login' element= {<Trainerlog />} />
        <Route path = '/trainer/dashboard' element = {<Trainerdashboard />} />
+       <Route path = "/trainer/client/:id" element = {<Client />} />
        
     </Routes>
     </>
